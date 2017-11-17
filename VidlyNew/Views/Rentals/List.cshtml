@@ -1,0 +1,60 @@
+﻿@model dynamic
+@{
+    ViewBag.Title = "Rentals";
+}
+
+<h2>@ViewBag.title</h2>
+
+
+@Html.ActionLink("New Rental", "New", "Rentals", new { @class = "btn btn-primary" })
+
+
+<table id="rentals" class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Date Rented</th>
+            <th>Date Returned</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/moment.js")
+    <script>
+        $(document).ready(function () {
+            
+
+                var table = $('#rentals').DataTable({
+                    ajax: {
+                        url: "/api/rentals",
+                        dataSrc: ""
+                    },
+                    columns: [
+                        {
+                            data: "dateRented", type: "date", render: function (data) {
+                                return moment(data).format("h:mm a MM/DD/YYYY");
+                            }
+                        },
+                        {
+                            data: "dateReturned", type: "date", render: function (data) {
+                                if (data != null) {
+                                    return moment(data).format("h:mm a MM/DD/YYYY");
+                                }
+
+                                return "N/A";
+                            }
+                        }
+                    ]
+
+            });
+
+
+        });
+        
+    </script>
+}

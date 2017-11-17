@@ -1,0 +1,70 @@
+﻿@model IEnumerable<VidlyNew.Models.Genre>
+
+@{
+    ViewBag.Title = "Genres";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+<a href="/Genres/New" class="btn btn-default">Add Genre</a>
+
+<table id="genres" class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Genre</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section Scripts {
+    
+    <script>
+        $(document).ready(function () {
+            var table = $('#genres').DataTable({
+                ajax: {
+                    url: "/api/genres",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, genre) {
+                            return "<a href='/genres/edit/" + genre.id + "'>" + genre.name + "</a>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class='btn-link js-delete' data-genre-id=" + data + ">Delete</button>";
+                        }
+                    }
+                ]
+            });
+
+
+            $('#genres').on("click", ".js-delete",
+                function () {
+                    var button = $(this);
+                    bootbox.confirm("Are you sure you want to delete this genre",
+                        function (result) {
+                            if (result) {
+                                $.ajax({
+                                    url: "/api/genres/" + button.attr("data-genre-id"),
+                                    method: "DELETE",
+                                    success: function () {
+                                        table.row(button.parents("tr")).remove().draw();
+                                    }
+                                });
+                            }
+                        });
+                });
+
+
+
+        });
+    </script>
+
+    
+    }
